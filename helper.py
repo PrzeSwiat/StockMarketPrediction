@@ -1,4 +1,5 @@
 import random
+from datetime import timedelta
 
 
 def select_random_subset(sample_data, subset_size=100):
@@ -21,3 +22,24 @@ def select_last_subset(sample_data, subset_size=100):
     selected_subset = sample_data[-subset_size:]
 
     return selected_subset
+
+
+def split_data(data):
+    dates = [entry['Date'] for entry in data]
+    prices = [entry['Price'] for entry in data]
+    return dates, prices
+
+
+def get_next_day(last_date):
+    next_day = last_date + timedelta(days=1)
+    return next_day
+
+
+def get_next_60_days(start_date):
+    next_days = [start_date + timedelta(days=i) for i in range(1, 61)]
+    return next_days
+
+
+def merge_data(dates, prices):
+    merged_data = [{'Date': date, 'Price': price} for date, price in zip(dates, prices)]
+    return merged_data
