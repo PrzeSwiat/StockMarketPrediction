@@ -5,6 +5,8 @@ import re
 import csv
 from datetime import datetime
 
+import helper
+
 
 def parse_date(date_str):
     return datetime.strptime(date_str, '%b %d %Y %H')
@@ -18,12 +20,14 @@ def load_csv_data(file_path):
 
         next(csv_reader)
         for row in csv_reader:
-            date_str, value1 = row
+            date_str, price, number, roi, change = row
             date = parse_date(date_str)
 
             data_array.append({
                 'Date': date,
-                'Price': float(value1)
+                'Price': float(price),
+                'ROI': float(roi),
+                'Change': float(change)
             })
 
     return data_array
@@ -48,16 +52,23 @@ def CreateCsvFromUrl(url):
         with open(csv_file_path, 'w', newline='') as csvfile:
             csv_writer = csv.writer(csvfile)
 
-            csv_writer.writerow(["Date", "Price", "Number"])
+            csv_writer.writerow(["Date", "Price", "Number", "ROI", "change"])
 
-            for item in line1_list:
+            previous_price = 0
+            for i in range(len(line1_list)):
+                item = line1_list[i]
                 date_str = item[0].replace(': +0', '')
                 item_date = datetime.strptime(date_str, '%b %d %Y %H')
 
                 # Check if the data was collected at 01:00
                 if item_date.hour == 1:
                     formatted_date_str = item_date.strftime('%b %d %Y %H')
-                    csv_writer.writerow([formatted_date_str, item[1]])
+                    current_price = item[1]
+                    roi_value = helper.calculate_roi(current_price, previous_price) if i > 0 else 0
+                    change_value = helper.calculate_change(current_price, previous_price) if i > 0 else 0
+                    csv_writer.writerow([formatted_date_str, current_price, i + 1, roi_value, change_value])
+                    previous_price = current_price
+
             print(f"CSV file created successfully: {csv_file_path}")
     else:
         print("No match found.")
