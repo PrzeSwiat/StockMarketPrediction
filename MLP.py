@@ -5,21 +5,30 @@ import helper
 
 
 class MLP:
-    def __init__(self, learning_rate=0.01, epochs=10000):
+    def __init__(self, learning_rate=0.01, epochs=10000, momentum=0.25):
         # Inicjalizacja wag i biasów dla dwóch warstw sieci
         self.input_size = 3
         self.hidden_size = 6
         self.output_size = 1
         self.learning_rate = learning_rate
         self.epochs = epochs
+        self.momentum = momentum
+
         self.weights_input_hidden = np.random.randn(self.input_size, self.hidden_size)
         self.bias_input_hidden = np.zeros((1, self.hidden_size))
         self.weights_hidden_output = np.random.randn(self.hidden_size, self.output_size)
         self.bias_hidden_output = np.zeros((1, self.output_size))
+
         self.output_layer_input = 0
         self.hidden_layer_output = 0
         self.hidden_layer_input = 0
         self.predicted_output = 0
+
+        # Inicjalizacja zmiennych momentum
+        self.momentum_weights_input_hidden = np.zeros_like(self.weights_input_hidden)
+        self.momentum_bias_input_hidden = np.zeros_like(self.bias_input_hidden)
+        self.momentum_weights_hidden_output = np.zeros_like(self.weights_hidden_output)
+        self.momentum_bias_hidden_output = np.zeros_like(self.bias_hidden_output)
 
     def sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
@@ -46,12 +55,22 @@ class MLP:
         hidden_error = d_output.dot(self.weights_hidden_output.T)
         d_hidden = hidden_error * self.sigmoid_derivative(self.hidden_layer_output)
 
-        # Aktualizacja wag i biasów
-        self.weights_hidden_output += self.hidden_layer_output.T.dot(d_output) * self.learning_rate
-        self.bias_hidden_output += np.sum(d_output) * self.learning_rate
+        # Aktualizacja wag i biasów z uwzględnieniem momentum
+        self.momentum_weights_hidden_output = (self.momentum * self.momentum_weights_hidden_output +
+                                               self.hidden_layer_output.T.dot(d_output) * self.learning_rate)
+        self.weights_hidden_output += self.momentum_weights_hidden_output
 
-        self.weights_input_hidden += inputs.T.dot(d_hidden) * self.learning_rate
-        self.bias_input_hidden += np.sum(d_hidden) * self.learning_rate
+        self.momentum_bias_hidden_output = (self.momentum * self.momentum_bias_hidden_output +
+                                            np.sum(d_output) * self.learning_rate)
+        self.bias_hidden_output += self.momentum_bias_hidden_output
+
+        self.momentum_weights_input_hidden = (self.momentum * self.momentum_weights_input_hidden +
+                                              inputs.T.dot(d_hidden) * self.learning_rate)
+        self.weights_input_hidden += self.momentum_weights_input_hidden
+
+        self.momentum_bias_input_hidden = (self.momentum * self.momentum_bias_input_hidden +
+                                           np.sum(d_hidden) * self.learning_rate)
+        self.bias_input_hidden += self.momentum_bias_input_hidden
 
     def train(self, inputs, targets):
         losses = []
@@ -62,6 +81,7 @@ class MLP:
 
                 output = self.forward_propagation(input_data)
                 self.backward_propagation(input_data, target)
+
                 if i == len(inputs)-1:
                     loss = np.mean(np.square(target - self.predicted_output))
                     losses.append(loss)
