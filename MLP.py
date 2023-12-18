@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib import pyplot as plt
 
 import helper
 
@@ -53,6 +54,7 @@ class MLP:
         self.bias_input_hidden += np.sum(d_hidden) * self.learning_rate
 
     def train(self, inputs, targets):
+        losses = []
         for epoch in range(self.epochs):
             for i in range(len(inputs)):
                 input_data = np.array(inputs[i], ndmin=2)
@@ -60,10 +62,21 @@ class MLP:
 
                 output = self.forward_propagation(input_data)
                 self.backward_propagation(input_data, target)
-
-                if epoch % 1000 == 0:
+                if i == len(inputs)-1:
                     loss = np.mean(np.square(target - self.predicted_output))
-                    #print(f"Epoch: {epoch}, Loss: {loss}")
+                    losses.append(loss)
+
+
+                #print(f"Epoch: {epoch}, Loss: {loss}")
+
+        plt.plot(losses, linestyle='-', marker='', color='b')
+        plt.title('loss during epochs')
+        plt.xlabel('epoch')
+        plt.ylabel('loss')
+        plt.xticks(rotation=45)
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
 
     def predict_next(self, next_input):
         nextPrice = self.forward_propagation(next_input)

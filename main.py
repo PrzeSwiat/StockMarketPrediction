@@ -34,7 +34,7 @@ norm_rois, min_roi_value, max_roi_value = helper.normalize_data(rois)
 #           -----    MLP   -----
 start_time = time.time()
 # Utworzenie i trening modelu MLP
-mlp = MLP(0.1, 10000)
+mlp = MLP(0.15, 2000)
 inputsArray, firstToPredict = helper.prepareInputMLP(norm_prices, norm_changes, norm_rois)
 outputsArray = helper.prepareOutputMLP(norm_prices)
 mlp.train(inputsArray, outputsArray)
