@@ -1,6 +1,18 @@
 import matplotlib.pyplot as plt
 
 
+def draw_plot(data):
+    plt.plot(data, linestyle='-', marker='', color='b')
+    plt.ylim(bottom=0, top=100)
+    plt.title('data on count')
+    plt.xlabel('count')
+    plt.ylabel('data')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+
 def plot_one_dataset(data):
     dates = [item['Date'] for item in data]
     prices = [item['Price'] for item in data]

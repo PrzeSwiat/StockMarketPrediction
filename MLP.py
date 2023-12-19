@@ -98,18 +98,22 @@ class MLP:
         plt.tight_layout()
         plt.show()
 
-    def predict_next(self, next_input):
+    def predict_next(self, next_input, last_n_prices):
         nextPrice = self.forward_propagation(next_input)
         nextChange = helper.calculate_change(nextPrice, next_input[0])
-        nextRoi = helper.calculate_roi(nextPrice, next_input[0])
-        output = np.hstack((nextPrice[0], nextChange[0], nextRoi[0]))
+        next_rsi = helper.calculate_rsi(last_n_prices, 10)
+        #print(next_rsi[-1])
+        output = np.hstack((nextPrice[0], nextChange[0], next_rsi[-1]))
         return output
 
-    def predict_for_days(self, first_input, days_to_predict):
+    def predict_for_days(self, first_input, days_to_predict, prices):
         outputs = []
+        new_rsis = []
         for i in range(days_to_predict):
-            output = self.predict_next(first_input)
+            output = self.predict_next(first_input, prices)
+            prices = np.append(prices, output[0])
+            new_rsis.append(output[2])
             outputs.append(output[0])
             first_input = output
-        return outputs
+        return outputs, new_rsis
 

@@ -53,21 +53,48 @@ def calculate_roi(current_value, cost):
     return roi
 
 
+def calculate_rsi(prices, period=14):
+    rsi_values = []
+
+    for i in range(period, len(prices)):
+        gains = losses = 0
+
+        for j in range(i - period, i):
+            price_diff = prices[j + 1] - prices[j]
+            if price_diff > 0:
+                gains += price_diff
+            elif price_diff < 0:
+                losses += abs(price_diff)
+
+        average_gain = gains / period
+        average_loss = losses / period
+
+        if average_loss == 0:
+            rs = 100
+        else:
+            rs = average_gain / average_loss
+
+        rsi = 100 - (100 / (1 + rs))
+        rsi_values.append(rsi)
+
+    return rsi_values
+
+
 def calculate_change(current_value, cost):
     change = current_value - cost
     return change
 
 
-def select_random_subset(sample_data, subset_size=100):
-    if not sample_data or subset_size <= 0:
+def select_random_subset(sample_data, subset_size=100, number_of_dates=10):
+    if not sample_data or subset_size+number_of_dates <= 0:
         return []
 
-    max_start_index = max(0, len(sample_data) - subset_size)
+    max_start_index = max(0, len(sample_data) - subset_size+number_of_dates)
     start_index = random.randint(0, max_start_index)
 
     training_subset = sample_data[start_index:start_index + subset_size]
-
-    return training_subset
+    output_subset = sample_data[start_index:start_index + subset_size + number_of_dates]
+    return training_subset, output_subset
 
 
 def select_last_subset(sample_data, subset_size=100):
