@@ -4,15 +4,19 @@ from datetime import timedelta
 import numpy as np
 
 
+def cut_first_rows(array, number):
+    return array[number:]
+
+
 def prepareInputMLP(array1, array2, array3):
     combined_tab = []
     for i in range(len(array1) - 1):
         # Tworzenie wiersza z trzech elementów
-        row = [array1[i], array2[i], array3[i]]
+        row = [ array2[i], array3[i]]
 
         # Dodawanie wiersza do combined_tab
         combined_tab.append(row)
-    last_row = [array1[-1], array2[-1], array3[-1]]
+    last_row = [ array2[-1], array3[-1]]
     return combined_tab, last_row
 
 
@@ -26,6 +30,22 @@ def relu(x):
 
 def relu_derivative(x):
     return np.where(x > 0, 1, 0)
+
+
+def min_max_scaling(data, min_range=-1, max_range=1):
+    data_array = np.array(data)
+
+    min_val = np.min(data_array)
+    max_val = np.max(data_array)
+
+    scaled_data = min_range + (max_range - min_range) * (data_array - min_val) / (max_val - min_val)
+
+    return scaled_data, min_val, max_val
+
+
+def inverse_min_max_scaling(scaled_data, min_val, max_val, min_range=-1, max_range=1):
+    original_data = min_val + (scaled_data - min_range) * (max_val - min_val) / (max_range - min_range)
+    return original_data
 
 
 def normalize_data(data):
@@ -54,6 +74,7 @@ def calculate_roi(current_value, cost):
 
 
 def calculate_rsi(prices, period=14):
+    # period - number of days to calculate RSI. Optimal value = 14 days
     rsi_values = []
 
     for i in range(period, len(prices)):
@@ -86,10 +107,10 @@ def calculate_change(current_value, cost):
 
 
 def select_random_subset(sample_data, subset_size=100, number_of_dates=10):
-    if not sample_data or subset_size+number_of_dates <= 0:
+    if not sample_data or subset_size + number_of_dates <= 0:
         return []
 
-    max_start_index = max(0, len(sample_data) - subset_size+number_of_dates)
+    max_start_index = max(0, len(sample_data) - subset_size + number_of_dates)
     start_index = random.randint(0, max_start_index)
 
     training_subset = sample_data[start_index:start_index + subset_size]

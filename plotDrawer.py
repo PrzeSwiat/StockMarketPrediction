@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 def draw_plot(data):
     plt.plot(data, linestyle='-', marker='', color='b')
-    plt.ylim(bottom=0, top=100)
+    #plt.ylim(bottom=0, top=100)
     plt.title('data on count')
     plt.xlabel('count')
     plt.ylabel('data')
@@ -34,10 +34,10 @@ def plot_two_datasets(data1, data2):
     prices2 = [item['Price'] for item in data2]
 
     # Rysowanie pierwszego wykresu w niebieskim kolorze
-    plt.plot(dates1, prices1, linestyle='-', marker='', color='b', label='Training data')
+    plt.plot(dates1, prices1, linestyle='-', marker='', color='b', label='Original data')
 
     # Rysowanie drugiego wykresu w czerwonym kolorze
-    plt.plot(dates2, prices2, linestyle='-', marker='', color='r', label='Output data')
+    plt.plot(dates2, prices2, linestyle='-', marker='', color='r', label='Predicted data')
 
     plt.title('Wykres Ceny w Czasie')
     plt.xlabel('Data')

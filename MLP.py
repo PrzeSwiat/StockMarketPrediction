@@ -7,8 +7,8 @@ import helper
 class MLP:
     def __init__(self, learning_rate=0.01, epochs=10000, momentum=0.25):
         # Inicjalizacja wag i biasów dla dwóch warstw sieci
-        self.input_size = 3
-        self.hidden_size = 6
+        self.input_size = 2
+        self.hidden_size = 64
         self.output_size = 1
         self.learning_rate = learning_rate
         self.epochs = epochs
@@ -83,7 +83,7 @@ class MLP:
                 self.backward_propagation(input_data, target)
 
                 if i == len(inputs)-1:
-                    loss = np.mean(np.square(target - self.predicted_output))
+                    loss = np.mean(np.square(target - output))
                     losses.append(loss)
 
 
@@ -98,22 +98,26 @@ class MLP:
         plt.tight_layout()
         plt.show()
 
-    def predict_next(self, next_input, last_n_prices):
-        nextPrice = self.forward_propagation(next_input)
-        nextChange = helper.calculate_change(nextPrice, next_input[0])
-        next_rsi = helper.calculate_rsi(last_n_prices, 10)
+    def predict_next(self, next_input, last_n_prices, min_change, max_change, min_price, max_price):
+        nextChange = self.forward_propagation(next_input)
+        nextChange = helper.inverse_min_max_scaling(nextChange, min_change, max_change)
+        #print(nextChange)
+        next_rsi = helper.calculate_rsi(last_n_prices, 14)
+        last_price = helper.denormalize_data(last_n_prices[-1], min_price, max_price)
+        print(last_price)
+        next_price = last_price + nextChange
         #print(next_rsi[-1])
-        output = np.hstack((nextPrice[0], nextChange[0], next_rsi[-1]))
+        output = np.hstack((nextChange[0], next_price[0], next_rsi[-1], last_n_prices[-1]))
         return output
 
-    def predict_for_days(self, first_input, days_to_predict, prices):
+    def predict_for_days(self, first_input, days_to_predict, prices, min_change, max_change, min_price, max_price):
         outputs = []
         new_rsis = []
         for i in range(days_to_predict):
-            output = self.predict_next(first_input, prices)
-            prices = np.append(prices, output[0])
+            output = self.predict_next(first_input, prices, min_change, max_change, min_price, max_price)
+            prices = np.append(prices, output[3])
             new_rsis.append(output[2])
-            outputs.append(output[0])
-            first_input = output
+            outputs.append(output[1])
+            first_input = [output[0], output[2]]
         return outputs, new_rsis
 
