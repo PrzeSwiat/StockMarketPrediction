@@ -12,11 +12,11 @@ def prepareInputMLP(array1, array2, array3):
     combined_tab = []
     for i in range(len(array1) - 1):
         # Tworzenie wiersza z trzech elementów
-        row = [ array2[i], array3[i]]
+        row = [array2[i], array3[i]]
 
         # Dodawanie wiersza do combined_tab
         combined_tab.append(row)
-    last_row = [ array2[-1], array3[-1]]
+    last_row = [array2[-1], array3[-1]]
     return combined_tab, last_row
 
 
@@ -55,6 +55,11 @@ def normalize_data(data):
     normalized_data = (data - min_values) / (max_values - min_values)
 
     return normalized_data, min_values, max_values
+
+
+def normalize_data_on_given_minmax(data, mina, maxa):
+    normalized_data = (data - mina) / (maxa - mina)
+    return normalized_data
 
 
 def denormalize_data(normalized_data, min_values, max_values):

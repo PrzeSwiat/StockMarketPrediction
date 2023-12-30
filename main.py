@@ -18,7 +18,7 @@ url2 = "https://steamcommunity.com/market/listings/730/Falchion%20Case"
 # '''
 file_path = 'output.csv'
 loaded_data = csvController.load_csv_data(file_path)
-number_of_days_to_predict = 3  # optimal = 3
+number_of_days_to_predict = 10  # optimal = 3
 sub_set, original_data = helper.select_random_subset(loaded_data, 100, number_of_days_to_predict)
 
 dates, prices, changes, rois = helper.split_data(sub_set)
@@ -48,20 +48,18 @@ mlp.train(inputsArray, outputsArray)
 
 end_time = time.time()
 execution_time = end_time - start_time
+print(prices[-1], changes[-1], rsis[-1], dates[-1])
 print(f"Czas uczenia sieci MLP: {execution_time} sekundy")
 
 # Przewidywanie dla kolejnych 'N' dni
 predicted_prices, new_rsis = mlp.predict_for_days(firstToPredict, number_of_days_to_predict, norm_prices, min_change_value, max_change_value, min_price_value, max_price_value)
 
 # Tworzenie dat dla 'N' kolejnych dni
-last_date = dates[-1]
-next_day = helper.get_next_day(last_date)
-new_dates = helper.get_next_days(next_day, number_of_days_to_predict)
+new_dates = helper.get_next_days(dates[-1], number_of_days_to_predict)
 
 # Wyświetlanie przewidywanych cen i kolejnych dat
 print("Predicted Prices for New Dates:", predicted_prices)
-print("new datas:", new_dates)
-print(original_data[-2])
+print(original_data[-3], original_data[-2], original_data[-1])
 merged = helper.merge_data(new_dates, predicted_prices)
 plotDrawer.plot_two_datasets(original_data, merged)
 
