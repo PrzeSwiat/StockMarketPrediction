@@ -18,8 +18,9 @@ url2 = "https://steamcommunity.com/market/listings/730/Falchion%20Case"
 # '''
 file_path = 'output.csv'
 loaded_data = csvController.load_csv_data(file_path)
-number_of_days_to_predict = 10  # optimal = 3
-sub_set, original_data = helper.select_random_subset(loaded_data, 100, number_of_days_to_predict)
+number_of_days_to_predict = 3  # optimal = 3
+subset_size = 100
+sub_set, original_data = helper.select_random_subset(loaded_data, subset_size, number_of_days_to_predict)
 
 dates, prices, changes, rois = helper.split_data(sub_set)
 origin_dates, origin_prices, origin_changes, origin_rois = helper.split_data(original_data)
@@ -62,7 +63,9 @@ new_dates = helper.get_next_days(dates[-1], number_of_days_to_predict)
 
 # Wyświetlanie przewidywanych cen i kolejnych
 print("prediction: ", predicted_prices)
-print("original: ", original_data[-3], original_data[-2], original_data[-1])
-merged = helper.merge_data(new_dates, predicted_prices)
-plotDrawer.plot_two_datasets(original_data, merged)
+print("original: ", original_data[-number_of_days_to_predict])
+predicted_prices = np.array(predicted_prices)
+predicted_with_origin = np.concatenate((origin_prices[:subset_size], predicted_prices))
+merged = helper.merge_data(origin_dates, predicted_with_origin)
+plotDrawer.plot_two_datasets(original_data, merged, 1)
 
