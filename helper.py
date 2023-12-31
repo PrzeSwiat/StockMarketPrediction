@@ -4,6 +4,17 @@ from datetime import timedelta
 import numpy as np
 
 
+def calculate_moving_average(data, window_size=14):
+    moving_avg = []
+
+    for i in range(len(data) - window_size + 1):
+        window = data[i:i + window_size]
+        avg = sum(window) / window_size
+        moving_avg.append(avg)
+
+    return moving_avg
+
+
 def cut_first_rows(array, number):
     return array[number:]
 
@@ -12,11 +23,11 @@ def prepareInputMLP(array1, array2, array3):
     combined_tab = []
     for i in range(len(array1) - 1):
         # Tworzenie wiersza z trzech elementów
-        row = [array2[i], array3[i]]
+        row = [array1[i], array2[i], array3[i]]
 
         # Dodawanie wiersza do combined_tab
         combined_tab.append(row)
-    last_row = [array2[-1], array3[-1]]
+    last_row = [array1[-1], array2[-1], array3[-1]]
     return combined_tab, last_row
 
 
