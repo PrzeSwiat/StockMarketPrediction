@@ -134,14 +134,14 @@ def select_random_subset(sample_data, subset_size=100, number_of_dates=10):
     return training_subset, output_subset
 
 
-def select_last_subset(sample_data, subset_size=100):
+def select_last_subset(sample_data, subset_size=100, number_of_dates=10):
     if not sample_data or subset_size <= 0:
         return []
 
     # Wyłonienie ostatnich 100 kolejnych wierszy
     selected_subset = sample_data[-subset_size:]
-
-    return selected_subset
+    output_subset = sample_data[-subset_size - number_of_dates:]
+    return selected_subset, output_subset
 
 
 def split_data(data):
@@ -165,3 +165,14 @@ def get_next_days(start_date, days):
 def merge_data(dates, prices):
     merged_data = [{'Date': date, 'Price': price} for date, price in zip(dates, prices)]
     return merged_data
+
+
+def calculate_accuracy(original_prices, predicted_prices, thresholding):
+    correct_predictions = 0
+    length = len(predicted_prices)
+    for i in range(len(original_prices)):
+        if abs(original_prices[i] - predicted_prices[i]) <= thresholding:
+            correct_predictions += 1
+        return correct_predictions / length
+
+
