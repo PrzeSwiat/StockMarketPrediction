@@ -171,8 +171,8 @@ def calculate_accuracy(original_prices, predicted_prices, thresholding):
     correct_predictions = 0
     length = len(predicted_prices)
     for i in range(len(original_prices)):
-        if abs(original_prices[i] - predicted_prices[i]) <= thresholding:
+        if abs(original_prices[i]['Price'] - predicted_prices[i]['Price']) <= thresholding:
             correct_predictions += 1
-        return correct_predictions / length
+    return correct_predictions / length
 
 

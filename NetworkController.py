@@ -38,4 +38,4 @@ def trainMLP(origin_prices, origin_dates, original_data, mas, norm_changes, rsis
     plotDrawer.plot_two_datasets(original_data, merged, 1)
     print("prediction: ", merged[-number_of_days_to_predict:])
     print("original: ", original_data[-number_of_days_to_predict:])
-    return merged, original_data
+    return merged[-number_of_days_to_predict:], original_data[-number_of_days_to_predict:]

@@ -21,7 +21,7 @@ file_path = 'output.csv'
 loaded_data = csvController.load_csv_data(file_path)
 
 #       -------------------   defaults --------------------
-number_of_days_to_predict = 60  # optimal = 3
+number_of_days_to_predict = 10  # optimal = 3
 subset_size = 500
 thresholding_value = 0.01
 #       -------------------   preparing data --------------------
@@ -45,8 +45,12 @@ norm_rsis, min_rsi_value, max_rsi_value = helper.normalize_data(rsis)
 
 #       -------------------   MLP--------------------
 print("Start")
-NetworkController.trainMLP(origin_prices, origin_dates, original_data, mas, norm_changes, rsis, prices, norm_prices,
-                           min_change_value, max_change_value, min_price_value, max_price_value, dates,
-                           number_of_days_to_predict, subset_size)
+predicted_prices, original_prices = NetworkController.trainMLP(origin_prices, origin_dates, original_data, mas,
+                                                               norm_changes, rsis, prices, norm_prices,
+                                                               min_change_value, max_change_value, min_price_value,
+                                                               max_price_value, dates,
+                                                               number_of_days_to_predict, subset_size)
 print("End")
 # calculate accuracy
+accuracy = helper.calculate_accuracy(original_prices, predicted_prices, thresholding_value)
+print("accuracy", accuracy)
