@@ -21,8 +21,8 @@ file_path = 'output.csv'
 loaded_data = csvController.load_csv_data(file_path)
 
 #       -------------------   defaults --------------------
-number_of_days_to_predict = 10  # optimal = 3
-subset_size = 300
+number_of_days_to_predict = 60  # optimal = 3
+subset_size = 500
 thresholding_value = 0.01
 #       -------------------   preparing data --------------------
 sub_set, original_data = helper.select_random_subset(loaded_data, subset_size, number_of_days_to_predict)

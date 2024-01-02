@@ -103,9 +103,7 @@ class MLP:
         nextChange = helper.calculate_change(nextPrice, last_n_prices[-1])
         next_rsi = helper.calculate_rsi(last_n_prices, 14)
         next_ma = helper.calculate_moving_average(last_n_prices, 14)
-        #nextPrice = helper.denormalize_data(nextPrice, min_price, max_price)
-        denormalized_nextPrice = helper.denormalize_data(nextPrice, min_price, max_price)
-        output = np.hstack((nextChange[0], nextPrice[0], next_rsi[-1], next_ma[-1], denormalized_nextPrice[0]))
+        output = np.hstack((nextChange[0], nextPrice[0], next_rsi[-1], next_ma[-1]))
         return output
 
     def predict_for_days(self, first_input, days_to_predict, prices, min_change, max_change, min_price, max_price):
@@ -115,7 +113,7 @@ class MLP:
             output = self.predict_next(first_input, prices, min_change, max_change, min_price, max_price)
             prices = np.append(prices, output[1])
             new_rsis.append(output[2])
-            outputs.append(output[4])
+            outputs.append(helper.denormalize_data(output[1], min_price, max_price))
             first_input = [output[3], output[0], output[2]]
         return outputs, new_rsis
 

@@ -10,7 +10,7 @@ from MLP import MLP
 def trainMLP(origin_prices, origin_dates, original_data, mas, norm_changes, rsis, prices, norm_prices, min_change_value, max_change_value, min_price_value, max_price_value, dates, number_of_days_to_predict=10, subset_size=300):
     start_time = time.time()
     # Utworzenie i trening modelu MLP
-    mlp = MLP(0.01, 5000, 0.9)
+    mlp = MLP(0.01, 2000, 0.9)
     inputsArray, firstToPredict = helper.prepareInputMLP(mas, norm_changes, rsis)
     outputsArray = helper.prepareOutputMLP(norm_prices)
     # plotDrawer.draw_plot(norm_changes)
