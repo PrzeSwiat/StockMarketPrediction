@@ -88,7 +88,7 @@ class MLP:
 
 
                 #print(f"Epoch: {epoch}, Loss: {loss}")
-
+        '''
         plt.plot(losses, linestyle='-', marker='', color='b')
         plt.title('loss during epochs')
         plt.xlabel('epoch')
@@ -97,6 +97,8 @@ class MLP:
         plt.grid(True)
         plt.tight_layout()
         plt.show()
+        '''
+
 
     def predict_next(self, next_input, last_n_prices, min_change, max_change, min_price, max_price):
         nextPrice = self.forward_propagation(next_input)

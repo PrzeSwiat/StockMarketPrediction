@@ -17,8 +17,11 @@ def load_csv_data(file_path):
 
     with open(file_path, 'r') as csv_file:
         csv_reader = csv.reader(csv_file)
-
+        # skip wrong data fix this later
         next(csv_reader)
+        for _ in range(400):
+            next(csv_reader)
+
         for row in csv_reader:
             date_str, price, number, roi, change = row
             date = parse_date(date_str)
