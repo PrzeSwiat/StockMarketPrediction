@@ -11,7 +11,7 @@ class MLPModel:
     def __init__(self):
         # Standardize the data
         self.scaler = StandardScaler()
-        self.mlp = MLPRegressor(hidden_layer_sizes=(264,), activation='logistic', max_iter=10000, random_state=42)
+        self.mlp = MLPRegressor(hidden_layer_sizes=(264,), activation='logistic', max_iter=10000, momentum=0.25, learning_rate_init=0.01)
 
     def train(self, mas, norm_changes, rsis, prices):
         inputsArray, firstToPredict = helper.prepareInputMLP(mas, norm_changes, rsis)
@@ -27,9 +27,9 @@ class MLPModel:
         # Evaluate the model using Mean Squared Error (MSE)
         y_pred = self.mlp.predict(X_test)
         mse = mean_squared_error(y_test, y_pred)
-        print(f'Mean Squared Error (MSE): {mse}')
+        #print(f'Mean Squared Error (MSE): {mse}')
         accuracy = self.mlp.score(X_test, y_test)
-        print(f'Model Accuracy: {accuracy}')
+        #print(f'Model Accuracy: {accuracy}')
 
         return firstToPredict
 
