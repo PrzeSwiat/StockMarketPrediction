@@ -46,6 +46,6 @@ class MLPModel:
         for i in range(days_to_predict):
             output = self.predict_next(first_input, prices)
             prices = np.append(prices, output[1])
-            outputs.append(helper.denormalize_data(output[1], min_price, max_price))
+            outputs.append(output[1])
             first_input = [output[3], output[0], output[2]]
         return outputs

@@ -70,8 +70,8 @@ for i in range(rounds_of_training):
 
     #       -------------------   MLPModel--------------------
     mlpmodel = MLPModel.MLPModel()
-    first_input = mlpmodel.train(norm_mas, changes, norm_rsis, norm_prices)
-    predicted_prices = mlpmodel.predict_for_days(first_input, number_of_days_to_predict, norm_prices, min_price_value, max_price_value)
+    first_input = mlpmodel.train(mas, changes, rsis, prices)
+    predicted_prices = mlpmodel.predict_for_days(first_input, number_of_days_to_predict, prices, min_price_value, max_price_value)
     predicted_prices = np.array(predicted_prices)
     predicted_with_origin = np.concatenate((origin_prices[:subset_size], predicted_prices))
     merged = helper.merge_data(origin_dates, predicted_with_origin)
@@ -84,12 +84,13 @@ end_time = time.time()
 execution_time = end_time - start_time
 hms_time = helper.seconds_to_hms(execution_time)
 print("End")
-print(f"Czas testowania sieci: {hms_time} sekundy")
+print(f"Czas testowania sieci: {hms_time}")
 
 
 print(len(all_accuracies))
 for i in range(len(all_accuracies)):
-    total_accuracy += all_accuracies[i]
+    if all_accuracies[i] != 1.0:
+        total_accuracy += all_accuracies[i]
 total_accuracy /= len(all_accuracies)
 
 print("Total accuracy", total_accuracy)
