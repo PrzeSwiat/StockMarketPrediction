@@ -19,20 +19,18 @@ def cut_first_rows(array, number):
     return array[number:]
 
 
-def prepareInputMLP(array1, array2, array3):
+def prepareInputMLP(prices):
     combined_tab = []
-    for i in range(len(array1) - 1):
-        # Tworzenie wiersza z trzech elementów
-        row = [array1[i], array2[i], array3[i]]
-
-        # Dodawanie wiersza do combined_tab
-        combined_tab.append(row)
-    last_row = [array1[-1], array2[-1], array3[-1]]
+    for i in range(len(prices)):
+        if i > 3:
+            row = [prices[i-3], prices[i-2], prices[i-1]]
+            combined_tab.append(row)
+    last_row = [prices[-3], prices[-2], prices[-1]]
     return combined_tab, last_row
 
 
 def prepareOutputMLP(array):
-    return array[1:]
+    return array[4:]
 
 
 def relu(x):

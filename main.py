@@ -23,7 +23,7 @@ file_path = 'output.csv'
 loaded_data = csvController.load_csv_data(file_path)
 
 #       -------------------   defaults --------------------
-number_of_days_to_predict = 10  # optimal = 10
+number_of_days_to_predict = 2  # optimal = 10
 subset_size = 500
 thresholding_value = 0.01
 total_accuracy = 0
@@ -70,8 +70,8 @@ for i in range(rounds_of_training):
 
     #       -------------------   MLPModel--------------------
     mlpmodel = MLPModel.MLPModel()
-    first_input = mlpmodel.train(mas, changes, rsis, prices)
-    predicted_prices = mlpmodel.predict_for_days(first_input, number_of_days_to_predict, prices, min_price_value, max_price_value)
+    first_input = mlpmodel.train(norm_prices)
+    predicted_prices = mlpmodel.predict_for_days(first_input, number_of_days_to_predict, norm_prices, min_price_value, max_price_value)
     predicted_prices = np.array(predicted_prices)
     predicted_with_origin = np.concatenate((origin_prices[:subset_size], predicted_prices))
     merged = helper.merge_data(origin_dates, predicted_with_origin)
@@ -89,8 +89,7 @@ print(f"Czas testowania sieci: {hms_time}")
 
 print(len(all_accuracies))
 for i in range(len(all_accuracies)):
-    if all_accuracies[i] != 1.0:
-        total_accuracy += all_accuracies[i]
+    total_accuracy += all_accuracies[i]
 total_accuracy /= len(all_accuracies)
 
 print("Total accuracy", total_accuracy)

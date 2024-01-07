@@ -11,10 +11,10 @@ class MLPModel:
     def __init__(self):
         # Standardize the data
         self.scaler = StandardScaler()
-        self.mlp = MLPRegressor(hidden_layer_sizes=(15,), activation='logistic', max_iter=10000, momentum=0.25, learning_rate_init=0.01)
+        self.mlp = MLPRegressor(hidden_layer_sizes=(128, 256, 256, 64), activation='identity', learning_rate='invscaling')
 
-    def train(self, mas, norm_changes, rsis, prices):
-        inputsArray, firstToPredict = helper.prepareInputMLP(mas, norm_changes, rsis)
+    def train(self, prices):
+        inputsArray, firstToPredict = helper.prepareInputMLP(prices)
         outputsArray = helper.prepareOutputMLP(prices)
         # Split the data into training and testing sets
 
@@ -46,6 +46,6 @@ class MLPModel:
         for i in range(days_to_predict):
             output = self.predict_next(first_input, prices)
             prices = np.append(prices, output[1])
-            outputs.append(output[1])
-            first_input = [output[3], output[0], output[2]]
+            outputs.append(helper.denormalize_data(output[1], min_price, max_price))
+            first_input = [prices[-3], prices[-2], prices[-1]]
         return outputs
