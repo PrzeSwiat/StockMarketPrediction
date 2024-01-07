@@ -11,7 +11,7 @@ class MLPModel:
     def __init__(self):
         # Standardize the data
         self.scaler = StandardScaler()
-        self.mlp = MLPRegressor(hidden_layer_sizes=(264,), activation='logistic', max_iter=10000, momentum=0.25, learning_rate_init=0.01)
+        self.mlp = MLPRegressor(hidden_layer_sizes=(15,), activation='logistic', max_iter=10000, momentum=0.25, learning_rate_init=0.01)
 
     def train(self, mas, norm_changes, rsis, prices):
         inputsArray, firstToPredict = helper.prepareInputMLP(mas, norm_changes, rsis)

@@ -28,7 +28,7 @@ subset_size = 500
 thresholding_value = 0.01
 total_accuracy = 0
 all_accuracies = []
-rounds_of_training = 10
+rounds_of_training = 100
 print("Start")
 start_time = time.time()
 
@@ -70,7 +70,7 @@ for i in range(rounds_of_training):
 
     #       -------------------   MLPModel--------------------
     mlpmodel = MLPModel.MLPModel()
-    first_input = mlpmodel.train(mas, norm_changes, rsis, norm_prices)
+    first_input = mlpmodel.train(norm_mas, changes, norm_rsis, norm_prices)
     predicted_prices = mlpmodel.predict_for_days(first_input, number_of_days_to_predict, norm_prices, min_price_value, max_price_value)
     predicted_prices = np.array(predicted_prices)
     predicted_with_origin = np.concatenate((origin_prices[:subset_size], predicted_prices))
