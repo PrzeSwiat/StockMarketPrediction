@@ -1,4 +1,5 @@
 import time
+from statistics import LinearRegression
 
 import numpy as np
 from pyparsing import helpers
@@ -10,6 +11,7 @@ import helper
 import plotDrawer
 from datetime import datetime
 
+from LinearRegresion import LinearRegressor
 from MLP import MLP
 
 
@@ -28,7 +30,7 @@ subset_size = 500
 thresholding_value = 0.01
 total_accuracy = 0
 all_accuracies = []
-rounds_of_training = 100
+rounds_of_training = 10
 print("Start")
 start_time = time.time()
 
@@ -69,6 +71,7 @@ for i in range(rounds_of_training):
     # print("accuracy", accuracy)
 
     #       -------------------   MLPModel--------------------
+    '''
     mlpmodel = MLPModel.MLPModel()
     first_input = mlpmodel.train(norm_prices)
     predicted_prices = mlpmodel.predict_for_days(first_input, number_of_days_to_predict, norm_prices, min_price_value, max_price_value)
@@ -76,6 +79,18 @@ for i in range(rounds_of_training):
     predicted_with_origin = np.concatenate((origin_prices[:subset_size], predicted_prices))
     merged = helper.merge_data(origin_dates, predicted_with_origin)
     plotDrawer.plot_two_datasets(original_data, merged, 1)
+    '''
+    #       -------------------   Linear Regresion--------------------
+    linreg = LinearRegressor()
+    first_input = linreg.train(norm_prices)
+    predicted_prices = linreg.predict_for_days(first_input, number_of_days_to_predict, norm_prices, min_price_value,
+                                                 max_price_value)
+    predicted_prices = np.array(predicted_prices)
+    predicted_with_origin = np.concatenate((origin_prices[:subset_size], predicted_prices))
+    merged = helper.merge_data(origin_dates, predicted_with_origin)
+    #plotDrawer.plot_two_datasets(original_data, merged, 1)
+
+    #       -------------------   --------------------
 
     accuracy = helper.calculate_accuracy(original_data[-number_of_days_to_predict:], merged[-number_of_days_to_predict:], thresholding_value)
     all_accuracies.append(accuracy)
