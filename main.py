@@ -2,6 +2,7 @@ import time
 from statistics import LinearRegression
 
 import numpy as np
+import sklearn
 from pyparsing import helpers
 
 import MLPModel
@@ -14,7 +15,6 @@ from datetime import datetime
 from LinearRegresion import LinearRegressor
 from MLP import MLP
 
-
 url1 = "https://steamcommunity.com/market/listings/730/Sticker%20Capsule"
 url2 = "https://steamcommunity.com/market/listings/730/Falchion%20Case"
 
@@ -25,17 +25,17 @@ file_path = 'output.csv'
 loaded_data = csvController.load_csv_data(file_path)
 
 #       -------------------   defaults --------------------
-number_of_days_to_predict = 2  # optimal = 10
+number_of_days_to_predict = 2  # optimal = 2
 subset_size = 500
 thresholding_value = 0.01
-total_accuracy = 0
 all_accuracies = []
-rounds_of_training = 10
+all_RMSE = []
+all_MAPE = []
+rounds_of_training = 500
 print("Start")
 start_time = time.time()
 
 for i in range(rounds_of_training):
-
     #       -------------------   preparing data --------------------
     sub_set, original_data = helper.select_random_subset(loaded_data, subset_size, number_of_days_to_predict)
     dates, prices, changes, rois = helper.split_data(sub_set)
@@ -78,22 +78,31 @@ for i in range(rounds_of_training):
     predicted_prices = np.array(predicted_prices)
     predicted_with_origin = np.concatenate((origin_prices[:subset_size], predicted_prices))
     merged = helper.merge_data(origin_dates, predicted_with_origin)
-    plotDrawer.plot_two_datasets(original_data, merged, 1)
+    #plotDrawer.plot_two_datasets(original_data, merged, 1)
     '''
     #       -------------------   Linear Regresion--------------------
+
     linreg = LinearRegressor()
     first_input = linreg.train(norm_prices)
     predicted_prices = linreg.predict_for_days(first_input, number_of_days_to_predict, norm_prices, min_price_value,
-                                                 max_price_value)
+                                               max_price_value)
     predicted_prices = np.array(predicted_prices)
     predicted_with_origin = np.concatenate((origin_prices[:subset_size], predicted_prices))
     merged = helper.merge_data(origin_dates, predicted_with_origin)
-    #plotDrawer.plot_two_datasets(original_data, merged, 1)
+    # plotDrawer.plot_two_datasets(original_data, merged, 1)
 
     #       -------------------   --------------------
 
-    accuracy = helper.calculate_accuracy(original_data[-number_of_days_to_predict:], merged[-number_of_days_to_predict:], thresholding_value)
+    RMSE = sklearn.metrics.mean_squared_error(origin_prices[:number_of_days_to_predict], predicted_prices) # Root Mean Square Error
+    MAPE = sklearn.metrics.mean_absolute_percentage_error(origin_prices[:number_of_days_to_predict], predicted_prices) # Mean Absolute Percentage Error
+    if MAPE > 1:    # mean_absolute_percentage_error function in sklearn library returns in range of [0,100]. if not, 1e2 notation occurred (creator's joke?)
+        MAPE = 0
+    accuracy = helper.calculate_accuracy(original_data[-number_of_days_to_predict:],
+                                         merged[-number_of_days_to_predict:], thresholding_value)
+
     all_accuracies.append(accuracy)
+    all_RMSE.append(RMSE)
+    all_MAPE.append(MAPE)
 
 end_time = time.time()
 execution_time = end_time - start_time
@@ -101,13 +110,11 @@ hms_time = helper.seconds_to_hms(execution_time)
 print("End")
 print(f"Czas testowania sieci: {hms_time}")
 
-
-print(len(all_accuracies))
-for i in range(len(all_accuracies)):
-    total_accuracy += all_accuracies[i]
-total_accuracy /= len(all_accuracies)
+total_accuracy = helper.calculate_average(all_accuracies)
+total_RMSE = helper.calculate_average(all_RMSE)
+total_MAPE = helper.calculate_average(all_MAPE)
 
 print("Total accuracy", total_accuracy)
-print("All accuracies", all_accuracies)
-
-
+#print("All accuracies", all_accuracies)
+print("Total RMSE", total_RMSE)
+print("Total MAPE", total_MAPE)

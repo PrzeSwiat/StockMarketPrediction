@@ -23,7 +23,7 @@ def prepareInputMLP(prices):
     combined_tab = []
     for i in range(len(prices)):
         if i > 3:
-            row = [prices[i-3], prices[i-2], prices[i-1]]
+            row = [prices[i - 3], prices[i - 2], prices[i - 1]]
             combined_tab.append(row)
     last_row = [prices[-3], prices[-2], prices[-1]]
     return combined_tab, last_row
@@ -179,3 +179,12 @@ def seconds_to_hms(seconds):
     minutes, seconds = divmod(remainder, 60)
     time_string = "{:02}:{:02}:{:02}".format(int(hours), int(minutes), int(seconds))
     return time_string
+
+
+def calculate_average(table):
+    average = 0
+    for i in range(len(table)):
+        average += table[i]
+    average /= len(table)
+    return average
+
