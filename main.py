@@ -14,6 +14,7 @@ from datetime import datetime
 
 from LassoRegression import LassoRegression
 from LinearRegresion import LinearRegressor
+from SupportVectorRegression import SupportVectorRegression
 from MLP import MLP
 
 url1 = "https://steamcommunity.com/market/listings/730/Sticker%20Capsule"
@@ -32,7 +33,7 @@ thresholding_value = 0.01
 all_accuracies = []
 all_RMSE = []
 all_MAPE = []
-rounds_of_training = 100
+rounds_of_training = 500
 print("Start")
 start_time = time.time()
 
@@ -82,7 +83,7 @@ for i in range(rounds_of_training):
     #plotDrawer.plot_two_datasets(original_data, merged, 1)
     '''
     #       -------------------   Linear Regression--------------------
-
+    '''
     linreg = LinearRegressor()
     first_input = linreg.train(norm_prices)
     predicted_prices = linreg.predict_for_days(first_input, number_of_days_to_predict, norm_prices, min_price_value,
@@ -91,7 +92,7 @@ for i in range(rounds_of_training):
     predicted_with_origin = np.concatenate((origin_prices[:subset_size], predicted_prices))
     merged = helper.merge_data(origin_dates, predicted_with_origin)
     # plotDrawer.plot_two_datasets(original_data, merged, 1)
-
+    '''
     #       -------------------  Lasso Regression --------------------
     '''
     lasso = LassoRegression()
@@ -102,8 +103,17 @@ for i in range(rounds_of_training):
     predicted_with_origin = np.concatenate((origin_prices[:subset_size], predicted_prices))
     merged = helper.merge_data(origin_dates, predicted_with_origin)
     #plotDrawer.plot_two_datasets(original_data, merged, 1)
-    #       -------------------   --------------------
     '''
+    #       -------------------  SupportVectorRegression --------------------
+    svr = SupportVectorRegression()
+    first_input = svr.train(norm_prices)
+    predicted_prices = svr.predict_for_days(first_input, number_of_days_to_predict, norm_prices, min_price_value,
+                                              max_price_value)
+    predicted_prices = np.array(predicted_prices)
+    predicted_with_origin = np.concatenate((origin_prices[:subset_size], predicted_prices))
+    merged = helper.merge_data(origin_dates, predicted_with_origin)
+    # plotDrawer.plot_two_datasets(original_data, merged, 1)
+
     RMSE = sklearn.metrics.mean_squared_error(origin_prices[:number_of_days_to_predict], predicted_prices) # Root Mean Square Error
     MAPE = sklearn.metrics.mean_absolute_percentage_error(origin_prices[:number_of_days_to_predict], predicted_prices) # Mean Absolute Percentage Error
     if MAPE > 1:    # mean_absolute_percentage_error function in sklearn library returns in range of [0,100]. if not, 1e2 notation occurred (creator's joke?)
