@@ -9,8 +9,8 @@ class BayesianRidgeRegression:
         self.br = BayesianRidge(tol=0.00001, max_iter=100000)
 
     def train(self, prices):
-        inputsArray, firstToPredict = helper.prepareInputMLP(prices)
-        outputsArray = helper.prepareOutputMLP(prices)
+        inputsArray, firstToPredict = helper.prepareInputPrices(prices)
+        outputsArray = helper.prepareOutputPrices(prices)
         self.br.fit(inputsArray, outputsArray)
         # score = self.linreg.score(inputsArray, outputsArray)
         # print(score)

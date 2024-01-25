@@ -14,8 +14,8 @@ class MLPModel:
         self.mlp = MLPRegressor(hidden_layer_sizes=(128, 256, 256, 64), activation='identity', learning_rate='invscaling')
 
     def train(self, prices):
-        inputsArray, firstToPredict = helper.prepareInputMLP(prices)
-        outputsArray = helper.prepareOutputMLP(prices)
+        inputsArray, firstToPredict = helper.prepareInputPrices(prices)
+        outputsArray = helper.prepareOutputPrices(prices)
         # Split the data into training and testing sets
 
         X_train, X_test, y_train, y_test = train_test_split(inputsArray, outputsArray, test_size=0.2, random_state=42)
