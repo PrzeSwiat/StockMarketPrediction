@@ -29,21 +29,21 @@ url7 = "https://steamcommunity.com/market/listings/730/Nova%20%7C%20Tempest%20%2
 url8 = "https://steamcommunity.com/market/listings/730/XM1014%20%7C%20Blaze%20Orange%20%28Field-Tested%29"
 url9 = "https://steamcommunity.com/market/listings/730/Negev%20%7C%20Bratatat%20%28Factory%20New%29"
 
-csvController.CreateCsvFromUrl(url2)
+csvController.create_csv_from_url(url4)
 
 # '''
 file_path = 'output.csv'
 loaded_data = csvController.load_csv_data(file_path)
 
 #       -------------------   defaults --------------------
-number_of_days_to_predict = 1  # optimal = 2
+number_of_days_to_predict = 60  # optimal = 2
 subset_size = 500
 thresholding_value = 0.01
 all_accuracies = []
 sk_accuracies = []
-all_RMSE = []
+all_MSE = []
 all_MAPE = []
-rounds_of_training = 10000
+rounds_of_training = 1
 print("Start")
 start_time = time.time()
 
@@ -96,26 +96,26 @@ for i in range(rounds_of_training):
     #plotDrawer.plot_two_datasets(original_data, merged, 1)
     '''
     #       -------------------   Linear Regression--------------------
-
+    '''
     linreg = LinearRegressor()
-    first_input = linreg.train(norm_prices)
-    predicted_prices = linreg.predict_for_days(first_input, number_of_days_to_predict, norm_prices, min_price_value,
+    first_input = linreg.train_by_rest(mas,changes,rois,prices)
+    predicted_prices = linreg.predict_for_days_by_rest(first_input, number_of_days_to_predict, prices, min_price_value,
                                                max_price_value)
     predicted_prices = np.array(predicted_prices)
     predicted_with_origin = np.concatenate((origin_prices[:subset_size], predicted_prices))
     merged = helper.merge_data(origin_dates, predicted_with_origin)
     #plotDrawer.plot_two_datasets(original_data, merged, 1)
-
+    '''
     #       -------------------  Lasso Regression --------------------
     '''
     lasso = LassoRegression()
-    first_input = lasso.train(norm_prices)
+    first_input = lasso.train6(norm_prices, mas, changes, rois)
     predicted_prices = lasso.predict_for_days(first_input, number_of_days_to_predict, norm_prices, min_price_value,
                                               max_price_value)
     predicted_prices = np.array(predicted_prices)
     predicted_with_origin = np.concatenate((origin_prices[:subset_size], predicted_prices))
     merged = helper.merge_data(origin_dates, predicted_with_origin)
-    #plotDrawer.plot_two_datasets(original_data, merged, 0.3)
+    plotDrawer.plot_two_datasets(original_data, merged, 0.3)
     '''
     #       -------------------  SupportVectorRegression --------------------
     '''
@@ -129,7 +129,7 @@ for i in range(rounds_of_training):
     # plotDrawer.plot_two_datasets(original_data, merged, 1)
     '''
     #       -------------------  BayesianRidge --------------------
-    '''
+
     brr = BayesianRidgeRegression()
     first_input = brr.train(norm_prices)
     predicted_prices = brr.predict_for_days(first_input, number_of_days_to_predict, norm_prices, min_price_value,
@@ -137,8 +137,8 @@ for i in range(rounds_of_training):
     predicted_prices = np.array(predicted_prices)
     predicted_with_origin = np.concatenate((origin_prices[:subset_size], predicted_prices))
     merged = helper.merge_data(origin_dates, predicted_with_origin)
-    #plotDrawer.plot_two_datasets(original_data, merged, 0.3)
-    '''
+    plotDrawer.plot_two_datasets(original_data, merged, 1)
+
     #       -------------------  Random Forest --------------------
     '''
     rfr = RandomForestRegression()
@@ -151,7 +151,7 @@ for i in range(rounds_of_training):
     #plotDrawer.plot_two_datasets(original_data, merged, 0.3)
     '''
 
-    RMSE = sklearn.metrics.mean_squared_error(origin_prices[:number_of_days_to_predict],
+    MSE = sklearn.metrics.mean_squared_error(origin_prices[:number_of_days_to_predict],
                                               predicted_prices)  # Root Mean Square Error
     MAPE = sklearn.metrics.mean_absolute_percentage_error(origin_prices[:number_of_days_to_predict],
                                                           predicted_prices)  # Mean Absolute Percentage Error
@@ -161,7 +161,7 @@ for i in range(rounds_of_training):
                                          merged[-number_of_days_to_predict:], thresholding_value)
 
     all_accuracies.append(accuracy)
-    all_RMSE.append(RMSE)
+    all_MSE.append(MSE)
     all_MAPE.append(MAPE)
 
 end_time = time.time()
@@ -171,12 +171,12 @@ print("End")
 print(f"Czas testowania sieci: {hms_time}")
 
 total_accuracy = helper.calculate_average(all_accuracies)
-total_RMSE = helper.calculate_average(all_RMSE)
+total_RMSE = helper.calculate_average(all_MSE)
 total_MAPE = helper.calculate_average(all_MAPE)
 
-print("Thresholding value", thresholding_value)
+print("last Thresholding value", thresholding_value)
 print("Total accuracy", total_accuracy)
 #print("Total SK accuracy", sk_accuracy)
 #print("All accuracies", all_accuracies)
-print("Total RMSE", total_RMSE)
+print("Total MSE", total_RMSE)
 print("Total MAPE", total_MAPE)

@@ -19,7 +19,7 @@ def cut_first_rows(array, number):
     return array[number:]
 
 
-def prepareInputPrices(prices):
+def prepare_input_prices(prices):
     combined_tab = []
     for i in range(len(prices)):
         if i > 3:
@@ -29,11 +29,11 @@ def prepareInputPrices(prices):
     return combined_tab, last_row
 
 
-def prepareOutputPrices(array):
+def prepare_output_prices(array):
     return array[4:]
 
 
-def prepareInputPrices6(array1, array2, array3, prices):
+def prepare_input_prices6(array1, array2, array3, prices):
     combined_tab = []
     for i in range(len(prices)):
         if i > 3:
@@ -43,23 +43,23 @@ def prepareInputPrices6(array1, array2, array3, prices):
     return combined_tab, last_row
 
 
-def prepareOutputPrices6(array):
+def prepare_output_prices6(array):
     return array[4:]
 
 
-def prepareInputRest(array1, array2, array3, array4):
+def prepare_input_rest(array1, array2, array3):
     combined_tab = []
     for i in range(len(array1) - 1):
         # Tworzenie wiersza z trzech elementów
         if i > 1:
-            row = [array1[i], array2[i], array3[i], array4[i - 1]]
+            row = [array1[i], array2[i], array3[i]]
             combined_tab.append(row)
         # Dodawanie wiersza do combined_tab
-    last_row = [array1[-1], array2[-1], array3[-1], array4[-1]]
+    last_row = [array1[-1], array2[-1], array3[-1]]
     return combined_tab, last_row
 
 
-def prepareOutputRest(array):
+def prepare_output_rest(array):
     return array[3:]
 
 

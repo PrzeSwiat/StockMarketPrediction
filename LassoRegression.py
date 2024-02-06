@@ -9,8 +9,8 @@ class LassoRegression:
         self.lasso = Lasso(alpha=0.0001, tol=0.0001, max_iter=1000, selection='cyclic')
 
     def train(self, prices):
-        inputsArray, firstToPredict = helper.prepareInputPrices(prices)
-        outputsArray = helper.prepareOutputPrices(prices)
+        inputsArray, firstToPredict = helper.prepare_input_prices(prices)
+        outputsArray = helper.prepare_output_prices(prices)
         self.lasso.fit(inputsArray, outputsArray)
         # score = self.linreg.score(inputsArray, outputsArray)
         # print(score)
@@ -34,8 +34,8 @@ class LassoRegression:
         return outputs
 
     def train6(self, prices, mas, changes, rsis):
-        inputsArray, firstToPredict = helper.prepareInputPrices6(mas, changes, rsis, prices)
-        outputsArray = helper.prepareOutputPrices6(prices)
+        inputsArray, firstToPredict = helper.prepare_input_prices6(mas, changes, rsis, prices)
+        outputsArray = helper.prepare_output_prices6(prices)
         self.lasso.fit(inputsArray, outputsArray)
         # score = self.linreg.score(inputsArray, outputsArray)
         # print(score)
@@ -56,14 +56,14 @@ class LassoRegression:
         denormprices = helper.denormalize_data(last_n_prices, min_price, max_price)
 
         nextChange = helper.calculate_change(denormprice, denormprices[-1])
-        next_rsi = helper.calculate_rsi(denormprices, 14)
+        next_rsi = helper.calculate_roi(denormprice, denormprices[-1])
         next_ma = helper.calculate_moving_average(denormprices, 14)
         output = np.hstack((nextChange[0], next_day_price[0], next_rsi[-1], next_ma[-1]))
         return output
 
     def train_by_rest(self, mas, norm_changes, rsis, prices):
-        inputsArray, firstToPredict = helper.prepareInputRest(mas, norm_changes, rsis, prices)
-        outputsArray = helper.prepareOutputRest(prices)
+        inputsArray, firstToPredict = helper.prepare_input_rest(mas, norm_changes, rsis, prices)
+        outputsArray = helper.prepare_output_rest(prices)
         self.lasso.fit(inputsArray, outputsArray)
         return firstToPredict
 

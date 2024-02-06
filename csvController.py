@@ -36,7 +36,7 @@ def load_csv_data(file_path):
     return data_array
 
 
-def CreateCsvFromUrl(url):
+def create_csv_from_url(url):
     result = requests.get(url)
 
     if result.status_code != 200:

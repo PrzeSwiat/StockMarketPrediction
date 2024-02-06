@@ -9,8 +9,8 @@ class RandomForestRegression:
         self.rf = RandomForestRegressor(n_estimators=100, criterion='squared_error', max_depth=100, min_samples_split=10, min_samples_leaf=10, min_weight_fraction_leaf=0.00001, max_features=1.0, max_leaf_nodes=10)
 
     def train(self, prices):
-        inputsArray, firstToPredict = helper.prepareInputPrices(prices)
-        outputsArray = helper.prepareOutputPrices(prices)
+        inputsArray, firstToPredict = helper.prepare_input_prices(prices)
+        outputsArray = helper.prepare_output_prices(prices)
         self.rf.fit(inputsArray, outputsArray)
         # score = self.linreg.score(inputsArray, outputsArray)
         # print(score)
